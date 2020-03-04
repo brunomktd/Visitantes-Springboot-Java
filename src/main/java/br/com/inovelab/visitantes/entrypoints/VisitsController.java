@@ -45,13 +45,7 @@ public class VisitsController {
             List<Visit> visits = visitRepository.findByRepresentativeName(representative);
             return VisitDto.execute(visits);
         }
-//        Visit visit = new Visit(
-//                new Representative(1,"Bruno"),
-//                new Client("Carol", "Estr das nações"),
-//                "29/02/2020",
-//                103.20
-//        );
-//        return VisitDto.execute(Arrays.asList(visit, visit, visit));
+
     };
 
     @PostMapping
