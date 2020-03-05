@@ -8,19 +8,15 @@ import java.util.stream.Collectors;
 
 public class VisitDto {
     private Long id;
-    private Long idRepresentative;
-    private String nameRepresentative;
-    private String clientName;
-    private String address;
+    private RepresentativeDto representative;
+    private ClientDto client;
     private LocalDateTime dateVisit;
     private double cost;
 
     public VisitDto(Visit visit){
         this.id = visit.getId();
-        this.idRepresentative = visit.getRepresentative().getId();
-        this.nameRepresentative = visit.getRepresentative().getName();
-        this.clientName = visit.getClient().getName();
-        this.address = visit.getClient().getAddress();
+        this.representative = new RepresentativeDto(visit.getRepresentative());
+        this.client = new ClientDto(visit.getClient());
         this.dateVisit = visit.getVisit();
         this.cost = visit.getCost();
     }
@@ -33,20 +29,12 @@ public class VisitDto {
         return id;
     }
 
-    public Long getIdRepresentative() {
-        return idRepresentative;
+    public RepresentativeDto getRepresentative() {
+        return representative;
     }
 
-    public String getNameRepresentative() {
-        return nameRepresentative;
-    }
-
-    public String getClientName() {
-        return clientName;
-    }
-
-    public String getAddress() {
-        return address;
+    public ClientDto getClient() {
+        return client;
     }
 
     public LocalDateTime getDateVisit() {
