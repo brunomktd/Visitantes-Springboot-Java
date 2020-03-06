@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -34,7 +35,6 @@ public class VisitsController {
 
     @GetMapping
     public List<VisitDto> visit(String representative){
-        System.out.println(representative);
         if(representative == null){
             List<Visit> visits = visitRepository.findAll();
             return VisitDto.execute(visits);
@@ -56,23 +56,35 @@ public class VisitsController {
     };
 
     @GetMapping("/{id}")
-    public DetailVisitDto show(@PathVariable Long id ){
-        Visit visit = visitRepository.getOne(id);
-        return new DetailVisitDto(visit);
+    public ResponseEntity<DetailVisitDto> show(@PathVariable Long id ){
+        Optional<Visit> visit = visitRepository.findById(id);
+        if(visit.isPresent()){
+            return ResponseEntity.ok(new DetailVisitDto(visit.get()));
+        }
+
+        return ResponseEntity.notFound().build();
     };
 
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<VisitDto> update(@PathVariable Long id, @RequestBody @Valid UpdateVisitForm updateVisit){
-        Visit visit = updateVisit.atualizar(id, visitRepository);
+        Optional<Visit> optional = visitRepository.findById(id);
 
-        return ResponseEntity.ok(new VisitDto(visit));
+        if(optional.isPresent()){
+            Visit visit = updateVisit.atualizar(id, visitRepository);
+            return ResponseEntity.ok(new VisitDto(visit));
+        }
+        return ResponseEntity.notFound().build();
     };
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
-        visitRepository.deleteById(id);
+        Optional<Visit> optional = visitRepository.findById(id);
 
-        return ResponseEntity.ok().build();
+        if(optional.isPresent()){
+            visitRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
