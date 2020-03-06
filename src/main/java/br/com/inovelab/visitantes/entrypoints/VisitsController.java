@@ -6,9 +6,11 @@ import br.com.inovelab.visitantes.repository.VisitRepository;
 import br.com.inovelab.visitantes.services.Visit;
 import br.com.inovelab.visitantes.services.dto.DetailVisitDto;
 import br.com.inovelab.visitantes.services.dto.VisitDto;
+import br.com.inovelab.visitantes.services.form.UpdateVisitForm;
 import br.com.inovelab.visitantes.services.form.VisitForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -51,12 +53,26 @@ public class VisitsController {
 
         URI uri = uriBuilder.path("visits/{id}").buildAndExpand(visit.getId()).toUri();
         return ResponseEntity.created(uri).body(new VisitDto(visit));
-    }
+    };
 
     @GetMapping("/{id}")
     public DetailVisitDto show(@PathVariable Long id ){
         Visit visit = visitRepository.getOne(id);
         return new DetailVisitDto(visit);
-    }
+    };
 
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<VisitDto> update(@PathVariable Long id, @RequestBody @Valid UpdateVisitForm updateVisit){
+        Visit visit = updateVisit.atualizar(id, visitRepository);
+
+        return ResponseEntity.ok(new VisitDto(visit));
+    };
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        visitRepository.deleteById(id);
+
+        return ResponseEntity.ok().build();
+    }
 }
